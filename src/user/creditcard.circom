@@ -14,9 +14,7 @@ include "../../node_modules/circomlib/circuits/comparators.circom";
     
     - ownerName
     
-    - key: the index of owner in tree
-    - siblings: path from owner's leaf to root
-    - root: current root in tree
+    - userInfoHashed: hash(creditCardNumber, creditCardExpireDate, creditCardCreationDate, cvv, bank, ownerName)
     Public input:
     - ownerName
     - availableTime
@@ -34,9 +32,7 @@ template MerkleTreeVerifier(nSiblings) {
 
     signal input ownerName;
     
-    signal input key;
-    signal input siblings[nSiblings];
-    signal input root;
+    signal input userInfoHashed;
     
     signal input availableTime;
 
@@ -50,14 +46,7 @@ template MerkleTreeVerifier(nSiblings) {
     leaf.in[4] <== bank;
     leaf.in[5] <== ownerName;
 
-    component r = CalculateRootFromSiblings(nSiblings);
-    r.key <== key;
-    r.in <== leaf.out;
-    for(i = 0; i < nSiblings; i++) {
-        r.siblings[i] <== siblings[i];
-    }
-
-    root === r.root;
+    userInfoHashed === leaf.out;
 
     component gte = GreaterEqThan(252);
     gte.in[0] <== creditCardExpireDate * 100;
@@ -66,4 +55,4 @@ template MerkleTreeVerifier(nSiblings) {
     gte.out === 1;
 }
 
-component main{public[ownerName, availableTime, key, root]} = MerkleTreeVerifier(32);
+component main{public[userInfoHashed, ownerName, availableTime]} = MerkleTreeVerifier(32);

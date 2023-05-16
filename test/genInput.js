@@ -1,7 +1,9 @@
 const fs = require("fs");
 const path = require('path');
+const { buildMimc7 } = require("circomlibjs");
 
-const { addLeaf, getTree, initialize, hash, getSiblings } = require("./fmt");
+let mimc;
+let F;
 
 function readJSONFilesInFolder(folderPath) {
     const files = fs.readdirSync(folderPath);
@@ -50,6 +52,10 @@ function convertStringAsciiToNumber(string) {
     return BigInt("0x".concat(...byteArrayToHexString(stringToAsciiBytes(string)))).toString()
 }
 
+function hash(arr) {
+    // return F.toObject(babyJub.unpackPoint(mimc.hash(L, R))[0]);
+    return F.toObject(mimc.multiHash(arr, 0));
+}
 
 const main = async () => {
     /**
@@ -57,8 +63,8 @@ const main = async () => {
      */
 
     // init tree
-    await initialize();
-    const tree = getTree();
+    mimc = await buildMimc7();
+    F = await mimc.F;
 
     // load userInfo Data
     const folderPath = 'test/userInfo';
@@ -66,7 +72,7 @@ const main = async () => {
 
     let userInfosCircuit = [];
     let encodeUserInfo;
-    let userLeaf;
+    let userInfoHashed = [];
 
     /**
      * Encode userInfo
@@ -91,15 +97,13 @@ const main = async () => {
 
     for (i = 0; i < jsonFilesData.length; i++) {
         //create user leaf
-        userLeaf = hash([userInfosCircuit[i].creditCardNumber, userInfosCircuit[i].creditCardExpireDate, userInfosCircuit[i].creditCardCreationDate, userInfosCircuit[i].cvv, userInfosCircuit[i].bank, userInfosCircuit[i].ownerName])
+        userInfoHashed.push(hash([userInfosCircuit[i].creditCardNumber, userInfosCircuit[i].creditCardExpireDate, userInfosCircuit[i].creditCardCreationDate, userInfosCircuit[i].cvv, userInfosCircuit[i].bank, userInfosCircuit[i].ownerName]))
         //add leaf to tree
-        tree.insert(userLeaf);
     }
 
     // gen input for circuit creating proof  for 1st user
     let userIndex = 0;
-    let root = tree.root();
-    let siblings = getSiblings(userIndex)
+
     // console.log(siblings)
     const input = {
         creditCardNumber: userInfosCircuit[userIndex].creditCardNumber,
@@ -108,11 +112,8 @@ const main = async () => {
         cvv: userInfosCircuit[userIndex].cvv,
         bank: userInfosCircuit[userIndex].bank,
         
-        ownerName: userInfosCircuit[userIndex].ownerName,
-        
-        key: userIndex,
-        siblings: siblings.map(e => e.toString()),
-        root: root,
+        ownerName: userInfosCircuit[userIndex].ownerName,      
+        userInfoHashed: userInfoHashed[userIndex].toString(),
 
         availableTime: 20230801
     }
