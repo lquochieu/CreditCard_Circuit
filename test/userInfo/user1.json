@@ -1,6 +1,7 @@
 {
     "creditCardNumber": "0123456789012345",
     "creditCardExpireDate": 202412,
+    "creditCardCreationDate": 202001,
     "ownerName": "Tran Trong Hiep",
     "cvv": "123",
     "bank": "vpbank"

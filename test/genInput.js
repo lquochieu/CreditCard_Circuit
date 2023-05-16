@@ -80,9 +80,10 @@ const main = async () => {
         encodeUserInfo = {
             creditCardNumber: parseInt(jsonFilesData[i].creditCardNumber, 10),
             creditCardExpireDate: jsonFilesData[i].creditCardExpireDate,
-            ownerName: convertStringAsciiToNumber(jsonFilesData[i].ownerName),
+            creditCardCreationDate: jsonFilesData[i].creditCardCreationDate,
             cvv: parseInt(jsonFilesData[i].cvv, 10),
-            bank: convertStringAsciiToNumber(jsonFilesData[i].bank)
+            bank: convertStringAsciiToNumber(jsonFilesData[i].bank),
+            ownerName: convertStringAsciiToNumber(jsonFilesData[i].ownerName),
         }
         userInfosCircuit.push(encodeUserInfo)
     }
@@ -90,7 +91,7 @@ const main = async () => {
 
     for (i = 0; i < jsonFilesData.length; i++) {
         //create user leaf
-        userLeaf = hash([userInfosCircuit[i].creditCardNumber, userInfosCircuit[i].creditCardExpireDate, userInfosCircuit[i].ownerName, userInfosCircuit[i].cvv, userInfosCircuit[i].bank])
+        userLeaf = hash([userInfosCircuit[i].creditCardNumber, userInfosCircuit[i].creditCardExpireDate, userInfosCircuit[i].creditCardCreationDate, userInfosCircuit[i].cvv, userInfosCircuit[i].bank, userInfosCircuit[i].ownerName])
         //add leaf to tree
         tree.insert(userLeaf);
     }
@@ -99,13 +100,15 @@ const main = async () => {
     let userIndex = 0;
     let root = tree.root();
     let siblings = getSiblings(userIndex)
-    console.log(siblings)
+    // console.log(siblings)
     const input = {
         creditCardNumber: userInfosCircuit[userIndex].creditCardNumber,
         creditCardExpireDate: userInfosCircuit[userIndex].creditCardExpireDate,
-        ownerName: userInfosCircuit[userIndex].ownerName,
+        creditCardCreationDate: userInfosCircuit[userIndex].creditCardCreationDate,
         cvv: userInfosCircuit[userIndex].cvv,
         bank: userInfosCircuit[userIndex].bank,
+        
+        ownerName: userInfosCircuit[userIndex].ownerName,
         
         key: userIndex,
         siblings: siblings.map(e => e.toString()),
