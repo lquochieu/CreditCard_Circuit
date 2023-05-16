@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma circom 2.0.0;
-include "../libs/merkletree/fmthash.circom";
-include "../libs/merkletree/fmtverifier.circom";
+include "../libs/hash.circom";
 include "../../node_modules/circomlib/circuits/comparators.circom";
 /*
     This circuit is used to proof user is credit card owner
@@ -22,7 +21,7 @@ include "../../node_modules/circomlib/circuits/comparators.circom";
     - root
 
 */
-template MerkleTreeVerifier(nSiblings) {
+template CreadiCardVerifier(nSiblings) {
     signal input creditCardNumber;
     signal input creditCardExpireDate;
     signal input creditCardCreationDate;
@@ -55,4 +54,4 @@ template MerkleTreeVerifier(nSiblings) {
     gte.out === 1;
 }
 
-component main{public[userInfoHashed, ownerName, availableTime]} = MerkleTreeVerifier(32);
+component main{public[userInfoHashed, ownerName, availableTime]} = CreadiCardVerifier(32);
