@@ -48,7 +48,7 @@ template MerkleTreeVerifier(nSiblings) {
     root === r.root;
 
     component gte = GreaterEqThan(252);
-    gte.in[0] <== creditCardExpireDate;
+    gte.in[0] <== creditCardExpireDate * 100;
     gte.in[1] <== availableTime;
 
     gte.out === 1;
