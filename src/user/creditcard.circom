@@ -46,12 +46,6 @@ template CreadiCardVerifier(nSiblings) {
     leaf.in[5] <== ownerName;
 
     userInfoHashed === leaf.out;
-
-    component gte = GreaterEqThan(252);
-    gte.in[0] <== creditCardExpireDate * 100;
-    gte.in[1] <== availableTime;
-
-    gte.out === 1;
 }
 
 component main{public[userInfoHashed, ownerName, availableTime]} = CreadiCardVerifier(32);
