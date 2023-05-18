@@ -115,7 +115,7 @@ const main = async () => {
         ownerName: userInfosCircuit[userIndex].ownerName,      
         userInfoHashed: userInfoHashed[userIndex].toString(),
 
-        availableTime: 20230801
+        availableTime: Math.floor(Date.now() / 1000) + 60 * 5,
     }
 
     json = JSON.stringify(input, null, 2);
